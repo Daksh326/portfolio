@@ -16,6 +16,18 @@
     />
     <meta property="og:type" content="website" />
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070908'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%23ff8a3d' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E" />
+
+    <script>
+      // Set the theme before first paint, or the page flashes dark on a
+      // light-theme reload. Deliberately inline and synchronous.
+      (function () {
+        var t = 'dark';
+        try { t = localStorage.getItem('dc-theme') || 'dark'; } catch (e) {}
+        document.documentElement.setAttribute('data-theme', t);
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', t === 'light' ? '#f4f3f0' : '#070908');
+      })();
+    </script>
   </head>
 
   <body>
@@ -61,6 +73,18 @@
       </nav>
 
       <div class="nav__tools">
+        <button
+          class="chip chip--icon"
+          id="themeBtn"
+          aria-pressed="false"
+          aria-label="Switch to light theme"
+          data-cursor="link"
+        >
+          <svg viewBox="0 0 16 16" aria-hidden="true">
+            <circle cx="8" cy="8" r="6.1" />
+            <path d="M8 1.9a6.1 6.1 0 0 0 0 12.2z" />
+          </svg>
+        </button>
         <a class="chip" href="#contact" data-cursor="link">CV</a>
         <span class="chip chip--mute">2026</span>
         <button class="chip chip--btn" id="menuBtn" aria-expanded="false" aria-controls="menu" aria-label="Open menu">

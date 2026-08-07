@@ -75,6 +75,27 @@ via `goTo()`, so the input models can never disagree about where you are.
 Dragging adds a transient offset that decays over the same window as the
 scroll animation, keeping the sum continuous.
 
+### Two themes
+
+The toggle in the nav switches between **dark** (cinematic teal/amber) and
+**light** (halftone on paper). Dark is the default; the choice persists in
+`localStorage`, and an inline script in `<head>` applies it before first paint
+so there's no flash on reload.
+
+The light theme is not an inverted dark theme. On the CSS side it's a second
+set of tokens in `:root[data-theme='light']` — strictly monochrome, with the
+accent role carried by black on warm white.
+
+On the WebGL side it costs one uniform. `uTheme` in `gl/post.js` cross-fades
+the final pass between the film grade and a **halftone screen**, where scene
+luminance becomes ink density on a dot grid rotated to 23°. Because it happens
+in post, none of the 3D objects know the theme exists: whatever is bright
+becomes ink, so the particle core prints as an ink stipple and the project
+cards print as dithered photographic plates — from exactly the same geometry.
+
+To change the default, edit the two fallbacks from `'dark'` to `'light'` in the
+inline script in [index.html](index.html).
+
 ### Performance
 
 `utils/device.js` probes cores, memory, DPR and pixel count into a `tier`:

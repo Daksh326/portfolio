@@ -41,6 +41,53 @@
   --e-out: cubic-bezier(0.16, 1, 0.3, 1);
   --e-io: cubic-bezier(0.65, 0.05, 0.36, 1);
   --t: 0.6s var(--e-out);
+
+  /* Ink colour to sit *on* the accent */
+  --on-accent: #120903;
+
+  color-scheme: dark;
+}
+
+/* ── Light theme ─────────────────────────────────────────────────────────────
+   Paper stock, not "dark mode inverted". Strictly monochrome — the accent
+   role is carried by pure black against warm white, exactly as the reference
+   does it, so nothing here needs a hue.
+   ──────────────────────────────────────────────────────────────────────────── */
+:root[data-theme='light'] {
+  --bg: #f4f3f0;
+  --bg-2: #eceae5;
+  --bg-3: #e3e1db;
+
+  --ink: #0d0d0d;
+  --ink-2: #3b3b3b;
+  --ink-3: #6d6d6d;
+  /* Darker than the dark theme's equivalent tier — the same de-emphasis is
+     much harder to read as grey-on-paper than as grey-on-black. */
+  --ink-4: #7d7a74;
+
+  --teal: #5a5a5a;
+  --teal-deep: #c9c6bf;
+  --amber: #0d0d0d;
+  --amber-soft: #3b3b3b;
+
+  --line: rgba(13, 13, 13, 0.16);
+  --line-2: rgba(13, 13, 13, 0.3);
+  --glass: rgba(244, 243, 240, 0.6);
+
+  --on-accent: #f4f3f0;
+
+  color-scheme: light;
+}
+
+/* The toggle should read as a dissolve, not a hard cut. Only surfaces that
+   don't already declare a colour transition need this — every component below
+   (chips, cards, buttons, thumbs) sets its own and would override it anyway. */
+body,
+.menu,
+.work__scrim {
+  transition:
+    background-color 0.7s var(--e-io),
+    color 0.7s var(--e-io);
 }
 
 /* ── Reset ───────────────────────────────────────────────────────────────── */
@@ -101,7 +148,7 @@ ol {
 
 ::selection {
   background: var(--amber);
-  color: #120903;
+  color: var(--on-accent);
 }
 
 :focus-visible {
@@ -734,7 +781,7 @@ a.chip:hover {
   padding: 11px;
   border-radius: 50%;
   background: var(--amber);
-  fill: #120903;
+  fill: var(--on-accent);
   flex: none;
   transition: transform 0.6s var(--e-out);
 }
@@ -1640,7 +1687,7 @@ a.chip:hover {
   inset: auto 0 0 0;
   z-index: 100;
   background: var(--amber);
-  color: #120903;
+  color: var(--on-accent);
   padding: 1rem var(--pad);
   font-size: 0.875rem;
 }
@@ -1654,6 +1701,146 @@ html.is-booting .nav,
 html.is-booting .rail,
 html.is-booting main {
   opacity: 0;
+}
+
+/* ── Light-theme component overrides ─────────────────────────────────────────
+   Anything that hard-codes a dark rgba() or a blend mode has to be restated;
+   everything driven by the tokens above changes on its own.
+   ──────────────────────────────────────────────────────────────────────────── */
+
+/* Paper texture instead of film grain: a fine dot screen, multiplied. */
+:root[data-theme='light'] .overlay--grain {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  /* Light on purpose: the halftone pass already lays paper tooth under this,
+     and stacking two textures at full strength muddies the whites. */
+  opacity: 0.2;
+  mix-blend-mode: multiply;
+}
+
+:root[data-theme='light'] .overlay--scan {
+  display: none;
+}
+
+:root[data-theme='light'] .overlay--vignette {
+  background: radial-gradient(130% 100% at 50% 45%, transparent 58%, rgba(13, 13, 13, 0.09) 100%);
+}
+
+:root[data-theme='light'] .nav.is-stuck {
+  background: rgba(244, 243, 240, 0.72);
+}
+
+:root[data-theme='light'] .menu {
+  background: rgba(244, 243, 240, 0.92);
+}
+
+:root[data-theme='light'] .chip--btn {
+  background: rgba(13, 13, 13, 0.05);
+}
+
+:root[data-theme='light'] .btn--play {
+  background: rgba(13, 13, 13, 0.04);
+}
+
+:root[data-theme='light'] .marquee {
+  background: linear-gradient(to right, transparent, rgba(236, 234, 229, 0.7), transparent);
+}
+
+:root[data-theme='light'] .stackCard::after {
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(13, 13, 13, 0.07), transparent 62%);
+}
+
+:root[data-theme='light'] .stackCard li {
+  background: rgba(13, 13, 13, 0.02);
+}
+
+/* The scrim keeps overlay copy legible, so on paper it has to lighten. */
+:root[data-theme='light'] .work__scrim {
+  background:
+    linear-gradient(to right, rgba(244, 243, 240, 0.94) 0%, rgba(244, 243, 240, 0.6) 32%, transparent 58%),
+    linear-gradient(to top, rgba(244, 243, 240, 0.82) 0%, transparent 34%);
+}
+
+:root[data-theme='light'] .thumbs li {
+  background: rgba(244, 243, 240, 0.72);
+}
+
+:root[data-theme='light'] .thumbs li:hover {
+  background: rgba(227, 225, 219, 0.9);
+}
+
+/* Thumbnails are generated dark; grayscale-then-invert lands them on paper
+   as light halftone plates instead of muddy negatives. */
+:root[data-theme='light'] .thumbs__img {
+  filter: grayscale(1) invert(1) contrast(1.15) brightness(1.02);
+}
+
+:root[data-theme='light'] .thumbs li.is-active .thumbs__img,
+:root[data-theme='light'] .thumbs li:hover .thumbs__img {
+  filter: grayscale(1) invert(1) contrast(1.3) brightness(0.96);
+}
+
+:root[data-theme='light'] .hero__scroll i {
+  background: linear-gradient(to bottom, var(--line-2), transparent);
+}
+
+:root[data-theme='light'] .hero__kicker i {
+  animation: none;
+}
+
+:root[data-theme='light'] .work__progress i,
+:root[data-theme='light'] .loader__bar i {
+  box-shadow: none;
+}
+
+:root[data-theme='light'].no-webgl body {
+  background:
+    radial-gradient(120% 80% at 50% 8%, rgba(13, 13, 13, 0.07), transparent 62%),
+    radial-gradient(90% 60% at 82% 92%, rgba(13, 13, 13, 0.05), transparent 58%),
+    var(--bg);
+}
+
+:root[data-theme='light'].no-webgl .work__pin {
+  background: linear-gradient(140deg, rgba(13, 13, 13, 0.06), transparent 60%);
+}
+
+/* ── Theme toggle chip ───────────────────────────────────────────────────── */
+.chip--icon {
+  padding-inline: 0;
+  min-width: 38px;
+  background: rgba(233, 240, 237, 0.06);
+}
+
+:root[data-theme='light'] .chip--icon {
+  background: rgba(13, 13, 13, 0.05);
+}
+
+.chip--icon svg {
+  width: 15px;
+  height: 15px;
+  overflow: visible;
+}
+
+.chip--icon circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+}
+
+.chip--icon path {
+  fill: currentColor;
+  transition: transform 0.7s var(--e-io);
+  transform-origin: 50% 50%;
+}
+
+.chip--icon:hover {
+  color: var(--ink);
+  border-color: var(--line-2);
+}
+
+/* Flip the filled half so the icon reflects which way the switch goes. */
+.chip--icon[aria-pressed='true'] path {
+  transform: rotate(180deg);
 }
 
 /* ── Custom cursor takes over the native one, but only once it's live ────── */

@@ -12,6 +12,7 @@ import { initNav } from './ui/nav.js';
 import { initWork } from './ui/work.js';
 import { initReveals, playIntro } from './ui/reveal.js';
 import { initMagnetic } from './ui/magnetic.js';
+import { initTheme } from './ui/theme.js';
 import { projects, sections } from './content.js';
 import { hasWebGL } from './utils/device.js';
 import { clamp } from './utils/math.js';
@@ -82,12 +83,13 @@ async function boot() {
   loader.set(0.7);
 
   const cursor = initCursor();
+  const theme = initTheme(stage);
   initNav();
   const work = initWork(stage, cursor);
 
   if (import.meta.env.DEV) {
     // Dev handle for poking at the scene from the console.
-    Object.assign(window, { __stage: stage, __gsap: gsap, __lenis: lenis, __work: work });
+    Object.assign(window, { __stage: stage, __gsap: gsap, __lenis: lenis, __work: work, __theme: theme });
   }
   initReveals();
   initMagnetic();

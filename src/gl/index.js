@@ -201,6 +201,10 @@ export class Stage {
     this.rail.resize(w / h, visH * (w / h), visH);
     this.bloom?.setSize(w, h);
     this.film.uniforms.uRes.value.set(w * dpr, h * dpr);
+
+    // Keep the dot screen a constant physical size across DPRs, and open it
+    // up a little on small screens so the ruling stays visible.
+    this.film.uniforms.uDot.value = (w < 700 ? 4.2 : 5.2) * dpr;
   }
 
   dispose() {
