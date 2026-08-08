@@ -1,9 +1,20 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { CustomEase } from 'gsap/CustomEase';
 import Lenis from 'lenis';
 import { reducedMotion } from '../utils/device.js';
 
-gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger, CustomEase);
+
+/**
+ * The reference's house curve. Read straight off its computed colour
+ * transitions — `cubic-bezier(0.44, 0, 0.56, 1)` — and reused for its appear
+ * animations, which are JS-driven and so don't show up in computed styles.
+ */
+export const FRAMER_EASE = CustomEase.create('framer', 'M0,0 C0.44,0 0.56,1 1,1');
+
+/** Framer Motion's default appear duration. */
+export const FRAMER_DUR = 0.5;
 
 export const lenis = new Lenis({
   duration: reducedMotion ? 0 : 1.15,

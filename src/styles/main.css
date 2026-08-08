@@ -952,10 +952,10 @@ html.is-locked body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1);
-  /* Fades in as each plate is hydrated, so slots never pop. */
+  /* Fades in as each plate is hydrated, so slots never pop. Transform is left
+     to GSAP so the entrance tween isn't double-driven. */
   opacity: 0;
-  transition: opacity 0.5s ease, transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.5s ease;
 }
 
 .shot:not(.shot--ph) img,
@@ -963,12 +963,9 @@ html.is-locked body {
   opacity: 1;
 }
 
-/* Measured off the reference: matrix(1.2, 0, 0, 1.2, 0, 0). */
-.band:hover .shot img,
-.focus li:hover .shot img,
-.about__body + .shot:hover img {
-  transform: scale(1.2);
-}
+/* The reference's scale(1.2) is an ENTRANCE state, not a hover one — images
+   settle out of the zoom as they scroll in. reveal.js drives it; no hover
+   rule here, because adding one fought the entrance tween. */
 
 /* Unmistakable while the art is fake; vanishes the moment a real `src` is set. */
 .shot--ph::after {

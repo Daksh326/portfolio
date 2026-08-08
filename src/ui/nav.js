@@ -1,4 +1,4 @@
-import { gsap, ScrollTrigger, lenis, scrollToId } from './scroll.js';
+import { gsap, ScrollTrigger, lenis, scrollToId, FRAMER_EASE, FRAMER_DUR } from './scroll.js';
 import { sections } from '../content.js';
 import { reducedMotion } from '../utils/device.js';
 
@@ -50,15 +50,16 @@ export function initNav() {
     .fromTo(
       menu,
       { clipPath: 'inset(0 0 100% 0)' },
-      { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.inOut' }
+      { clipPath: 'inset(0 0 0% 0)', duration: 0.6, ease: FRAMER_EASE }
     )
+    // Measured from-state: matrix(1, 0, 0, 1, 0, -40) — they drop in.
     .fromTo(
       items,
-      { yPercent: 115, opacity: 0 },
-      { yPercent: 0, opacity: 1, duration: 0.85, stagger: 0.05, ease: 'expo.out' },
-      '-=0.45'
+      { y: -40, opacity: 0 },
+      { y: 0, opacity: 1, duration: FRAMER_DUR, stagger: 0.06, ease: FRAMER_EASE },
+      '-=0.35'
     )
-    .fromTo('.menu__foot', { opacity: 0 }, { opacity: 1, duration: 0.45 }, '-=0.35');
+    .fromTo('.menu__foot', { opacity: 0 }, { opacity: 1, duration: FRAMER_DUR }, '-=0.3');
 
   if (reducedMotion) tl.timeScale(8);
 
