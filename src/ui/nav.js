@@ -2,57 +2,36 @@ import { gsap, ScrollTrigger, lenis, scrollToId } from './scroll.js';
 import { sections } from '../content.js';
 import { reducedMotion } from '../utils/device.js';
 
-/** Nav bar, fullscreen menu, and the right-edge section index. */
+/** Nav bar, fullscreen menu, and scroll-linked chrome. */
 export function initNav() {
   const nav = document.getElementById('nav');
   const menu = document.getElementById('menu');
   const menuBtn = document.getElementById('menuBtn');
-  const railEl = document.getElementById('sectionRail');
-  const railItems = [...railEl.querySelectorAll('.rail__list li')];
-  const railFill = railEl.querySelector('.rail__line i');
   const navLinks = [...document.querySelectorAll('[data-nav-link]')];
 
-  /* ── scroll chrome ─────────────────────────────────────────────────── */
   let lastY = 0;
-  let menuOpen = false;
+  let open = false;
 
   lenis.on('scroll', ({ scroll }) => {
     nav.classList.toggle('is-stuck', scroll > 40);
-
-    const down = scroll > lastY;
-    if (!menuOpen) nav.classList.toggle('is-hidden', down && scroll > 260);
+    if (!open) nav.classList.toggle('is-hidden', scroll > lastY && scroll > 280);
     lastY = scroll;
-
-    railEl.classList.toggle('is-on', scroll > 120);
-  });
-
-  /* ── overall progress bar on the index rail ────────────────────────── */
-  gsap.to(railFill, {
-    scaleY: 1,
-    ease: 'none',
-    scrollTrigger: { trigger: document.body, start: 'top top', end: 'bottom bottom', scrub: 0.4 },
   });
 
   /* ── active section ────────────────────────────────────────────────── */
-  function setActive(id) {
-    for (const li of railItems) li.classList.toggle('is-active', li.dataset.target === id);
+  const setActive = (id) => {
     for (const a of navLinks) a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`);
-  }
+  };
 
-  for (const s of sections) {
-    const target = document.getElementById(s.id);
-    if (!target) continue;
+  for (const s of sections.filter((x) => x.on !== false)) {
+    const el = document.getElementById(s.id);
+    if (!el) continue;
     ScrollTrigger.create({
-      trigger: target,
+      trigger: el,
       start: 'top 55%',
       end: 'bottom 55%',
       onToggle: (self) => self.isActive && setActive(s.id),
     });
-  }
-  setActive(sections[0].id);
-
-  for (const li of railItems) {
-    li.addEventListener('click', () => scrollToId(`#${li.dataset.target}`));
   }
 
   /* ── fullscreen menu ───────────────────────────────────────────────── */
@@ -71,41 +50,39 @@ export function initNav() {
     .fromTo(
       menu,
       { clipPath: 'inset(0 0 100% 0)' },
-      { clipPath: 'inset(0 0 0% 0)', duration: 0.85, ease: 'expo.inOut' }
+      { clipPath: 'inset(0 0 0% 0)', duration: 0.8, ease: 'expo.inOut' }
     )
     .fromTo(
       items,
-      { yPercent: 118, opacity: 0 },
-      { yPercent: 0, opacity: 1, duration: 0.9, stagger: 0.055, ease: 'expo.out' },
-      '-=0.5'
+      { yPercent: 115, opacity: 0 },
+      { yPercent: 0, opacity: 1, duration: 0.85, stagger: 0.05, ease: 'expo.out' },
+      '-=0.45'
     )
-    .fromTo('.menu__foot', { opacity: 0 }, { opacity: 1, duration: 0.5 }, '-=0.4');
+    .fromTo('.menu__foot', { opacity: 0 }, { opacity: 1, duration: 0.45 }, '-=0.35');
 
-  if (reducedMotion) tl.timeScale(6);
+  if (reducedMotion) tl.timeScale(8);
 
   function openMenu() {
-    if (menuOpen) return;
-    menuOpen = true;
+    if (open) return;
+    open = true;
     menuBtn.setAttribute('aria-expanded', 'true');
-    menuBtn.setAttribute('aria-label', 'Close menu');
     nav.classList.remove('is-hidden');
     lenis.stop();
     tl.play();
   }
 
   function closeMenu() {
-    if (!menuOpen) return;
-    menuOpen = false;
+    if (!open) return;
+    open = false;
     menuBtn.setAttribute('aria-expanded', 'false');
-    menuBtn.setAttribute('aria-label', 'Open menu');
     lenis.start();
     tl.reverse();
   }
 
-  menuBtn.addEventListener('click', () => (menuOpen ? closeMenu() : openMenu()));
+  menuBtn.addEventListener('click', () => (open ? closeMenu() : openMenu()));
 
   window.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && menuOpen) closeMenu();
+    if (e.key === 'Escape' && open) closeMenu();
   });
 
   /* ── anchor routing (everything goes through Lenis) ────────────────── */
@@ -113,15 +90,14 @@ export function initNav() {
     const a = e.target.closest?.('a[href^="#"]');
     if (!a) return;
     const id = a.getAttribute('href');
-    if (id === '#' || id.length < 2) return;
+    if (id.length < 2) return;
     const target = document.querySelector(id);
     if (!target) return;
 
     e.preventDefault();
-    if (menuOpen) {
+    if (open) {
       closeMenu();
-      // Let the menu clear before the page moves under it.
-      gsap.delayedCall(0.35, () => scrollToId(target));
+      gsap.delayedCall(0.3, () => scrollToId(target));
     } else {
       scrollToId(target);
     }

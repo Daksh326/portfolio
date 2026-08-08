@@ -1,10 +1,10 @@
 # Daksh Chaudhary — Portfolio
 
-A dark, cinematic single-page portfolio. Real WebGL 3D on one persistent canvas,
-smooth-scroll choreography, and a drag-and-scroll project rail.
+A dark, minimal, type-led single-page portfolio. Near-black base, vermilion
+accent, condensed display type, numbered sections.
 
-Built with **Vite + Three.js + GSAP (ScrollTrigger) + Lenis**. No images ship
-with the site — every visual is generated procedurally in a shader.
+Built with **Vite + GSAP (ScrollTrigger) + Lenis**. No framework, no images, no
+WebGL — around 150 KB of JS total.
 
 ```bash
 npm install
@@ -17,123 +17,94 @@ npm run preview  # serve the build locally
 
 ## Edit your content first
 
-**Everything you need to change lives in one file: [`src/content.js`](src/content.js).**
+**Everything is in one file: [`src/content.js`](src/content.js).**
 
-The copy currently in there is realistic **placeholder** content — plausible
-projects for a final-year CS student, not your real ones. Replace:
+> Anything marked **PLACEHOLDER** is invented. Replace it or delete it before
+> this goes in front of anyone — the page renders a visible orange `PLACEHOLDER`
+> badge on those items so you can't ship them by accident.
 
-| Key | What it drives |
+| Export | Drives |
 | --- | --- |
-| `profile` | Name, role, bio, stats, social links, email |
-| `projects` | The 3D rail: title, blurb, tags, role, year, links |
-| `stack` | The four-column tech grid |
-| `timeline` | The "Path" section |
-| `sections` | The right-edge section index (keep in sync with `index.html`) |
+| `profile` | Hero display name, location/role, the stacked assertions, about copy, stats, socials |
+| `experience` | •02 — reverse-chronological list |
+| `focus` | •03 — three-column "what I do" |
+| `work` | •04 — selected work cards |
+| `testimonials` | •05 — **all placeholder** |
+| `recognition` | •06 — **all placeholder** |
+| `sections` | Order, labels, and on/off for every numbered section |
 
-Each project has a `seed` (number) and `hue` (`0` = teal → `1` = amber). Those
-two values deterministically generate that project's artwork, in both the 3D
-card and its thumbnail. Change `seed` to get a completely different image;
-change `hue` to warm it up. There is nothing to upload.
+Section numbering (`•01`, `•02` …) is generated from the `sections` array, so
+setting `on: false` or deleting an entry renumbers everything else
+automatically. Nothing is hard-coded.
 
-Placeholders you'll definitely want to replace: the `href: '#'` project links,
-`Add your company` in the timeline, and the GitHub/LinkedIn/résumé URLs.
+### Sections you probably want to delete
+
+The design this follows has *Testimonials* and *Awards*. If you don't have real
+ones, set `on: false` on `testimonials` and `recognition` in `sections` — a
+short honest page beats a long padded one, and fabricated endorsements are the
+fastest way to lose a reader who checks.
 
 ---
 
+## Design system
+
+| Role | Value |
+| --- | --- |
+| Background | `#0c0c0c` |
+| Surfaces | `rgba(255,255,255,.02)` |
+| Ink / muted | `#ffffff` / `#8f8f8f` |
+| Accent | `#fa4e3e` |
+| Display | Bebas Neue, uppercase, `line-height: 0.9` |
+| Headings | Inter 700, uppercase, `letter-spacing: -0.07em` |
+| Labels | Fira Mono 14px, uppercase |
+| Stats panel | white `#fff`, black text, 50px numerals |
+
+Values were read off the reference's computed styles rather than eyeballed, and
+verified back against it at its own 1265px width.
+
+That `-0.07em` on every uppercase Inter run is doing most of the work — it's
+what makes the headings, stats, experience rows and section labels read as one
+system rather than four. It's the `--tight` token in
+[main.css](src/styles/main.css).
+
+The hero display is sized to the frame (`clamp(3.4rem, 15.8vw, 17rem)`) rather
+than to a point size, so it stays edge-to-edge at any width.
+
+The stats block is the one inverted panel — white with black text. It's the
+design's single biggest contrast moment, so keep it.
+
 ## How it works
 
-### One canvas, three objects
+**One clock.** GSAP's ticker drives Lenis, Lenis drives ScrollTrigger, and the
+cursor loop is another ticker callback. Nothing runs on its own
+`requestAnimationFrame`, so nothing can tear against anything else.
 
-`src/gl/index.js` owns a single `WebGLRenderer`, camera and post-processing
-chain for the whole page. Sections don't get their own scenes — they raise and
-lower opacity targets on three shared objects, which is why moving between
-them never costs a context switch or a frame drop.
+**Text splitting.** `ui/split.js` splits headings into characters and body copy
+into measured visual lines, each in a masked row. The original string is kept
+as the element's accessible name and the generated spans are hidden from
+assistive tech, so a screen reader hears normal sentences.
 
-| Object | File | Role |
-| --- | --- | --- |
-| `Core` | `gl/core.js` | Particle mass + instrument rings + haze (hero, contact) |
-| `Rail` | `gl/rail.js` | The cover-flow project carousel (work) |
-| `Grid` | `gl/grid.js` | Floor grid receding into haze (everywhere) |
+**Reveals.** Any element with `data-reveal="fade | chars | lines | stagger"`
+gets a one-shot scroll animation. The hero is excluded — `playIntro()`
+choreographs it so the same characters aren't animated twice.
 
-Post chain: `RenderPass → UnrealBloom (high tier only) → OutputPass → film pass`.
-The film pass (`gl/post.js`) adds radial chromatic aberration, grain and
-vignette, and its strength is driven by scroll velocity.
-
-### One clock
-
-GSAP's ticker drives Lenis, Lenis drives ScrollTrigger, and the WebGL loop is
-another ticker callback. Nothing runs on its own `requestAnimationFrame`, so
-nothing can tear against anything else. All interpolation goes through
-`damp()` in `utils/math.js`, which is frame-rate independent — identical feel
-at 60Hz and 144Hz.
-
-### The project rail
-
-Scroll is the single source of truth for which project is focused. Drag,
-arrow keys, prev/next and thumbnail clicks all resolve to a scroll position
-via `goTo()`, so the input models can never disagree about where you are.
-Dragging adds a transient offset that decays over the same window as the
-scroll animation, keeping the sum continuous.
-
-### Two themes
-
-The toggle in the nav switches between **dark** (cinematic teal/amber) and
-**light** (halftone on paper). Dark is the default; the choice persists in
-`localStorage`, and an inline script in `<head>` applies it before first paint
-so there's no flash on reload.
-
-The light theme is not an inverted dark theme. On the CSS side it's a second
-set of tokens in `:root[data-theme='light']` — strictly monochrome, with the
-accent role carried by black on warm white.
-
-On the WebGL side it costs one uniform. `uTheme` in `gl/post.js` cross-fades
-the final pass between the film grade and a **halftone screen**, where scene
-luminance becomes ink density on a dot grid rotated to 23°. Because it happens
-in post, none of the 3D objects know the theme exists: whatever is bright
-becomes ink, so the particle core prints as an ink stipple and the project
-cards print as dithered photographic plates — from exactly the same geometry.
-
-To change the default, edit the two fallbacks from `'dark'` to `'light'` in the
-inline script in [index.html](index.html).
-
-### Performance
-
-`utils/device.js` probes cores, memory, DPR and pixel count into a `tier`:
-
-| Tier | Particles | Bloom | Antialias | Max DPR |
-| --- | --- | --- | --- | --- |
-| 2 (desktop) | 38k | yes | yes | 2 |
-| 1 (mid / large phone) | 18k | no | no | 1.5 |
-| 0 (low / reduced-motion) | 7k | no | no | 1 |
-
-Rendering pauses when the tab is hidden, the delta is clamped so returning to
-a backgrounded tab can't fire one enormous frame, and WebGL context loss is
-handled. If WebGL is unavailable the canvas is removed and a CSS gradient
-fallback takes over — the page stays fully readable and navigable.
-
-### Accessibility
-
-- `prefers-reduced-motion` disables smooth scroll, the grain/scanline overlays
-  and all reveal animation; content renders in its final state.
-- Split text keeps the original string as the element's accessible name and
-  hides the generated spans, so screen readers read normal sentences.
-- The custom cursor only hides the native one after it has actually
-  initialised, and never on touch or coarse pointers.
-- Focus-visible outlines, keyboard-operable thumbnails, and Escape closes the menu.
+**Accessibility.** `prefers-reduced-motion` disables smooth scroll, the grain
+overlay and all reveal motion, rendering content in its final state. The custom
+cursor only hides the native one after it has actually initialised, and never on
+touch or coarse pointers. Escape closes the menu.
 
 ---
 
 ## Deploying
 
-The build is fully static and `base` is `./`, so it works from any subpath.
+Static build, `base` is `./`, so it works from any path.
 
 ```bash
 npm run build
 ```
 
-Then drop `dist/` on Vercel, Netlify, Cloudflare Pages or GitHub Pages. For
-Netlify/Vercel the build command is `npm run build` and the publish directory
-is `dist`.
+Push to `main` and Vercel redeploys automatically. Framework preset **Vite**,
+build command `npm run build`, output directory `dist` — all auto-detected.
 
 ---
 
@@ -141,28 +112,33 @@ is `dist`.
 
 ```
 src/
-  content.js         ← all copy, projects, links   (edit this)
+  content.js         ← all copy and sections   (edit this)
   main.js            boot sequence
-  styles/main.css    design tokens + every component
-  gl/
-    index.js         renderer, camera, composer, frame loop
-    core.js          hero particle core
-    rail.js          3D project carousel
-    grid.js          floor grid
-    post.js          film grade pass
-    glsl.js          shared shader chunks (noise, fbm, sdf)
+  styles/main.css    tokens + every component
   ui/
+    build.js         renders content.js into the DOM
     scroll.js        Lenis + GSAP wiring
-    work.js          rail controller (scroll / drag / keys)
-    nav.js           nav, fullscreen menu, section index
+    nav.js           nav, fullscreen menu, active section
     reveal.js        scroll reveals + hero intro
     split.js         char / line splitting
     preloader.js     boot progress
     cursor.js        custom cursor
     magnetic.js      magnetic buttons
-    build.js         renders content.js into the DOM
   utils/
-    math.js          damp, lerp, clamp, seeded rng
-    device.js        capability tiers
-    thumb.js         canvas-2D thumbnail generator
+    math.js          damp, lerp, clamp, pad2
+    device.js        reduced-motion / touch probes
 ```
+
+### Boot safety
+
+The preloader's exit runs on GSAP's rAF-backed ticker, so a tab backgrounded
+mid-load can stall it. A 4s `setTimeout` failsafe in
+[preloader.js](src/ui/preloader.js) guarantees the overlay is removed and the
+scroll lock released regardless — without it, a stalled ticker left a
+full-screen `pointer-events: auto` layer swallowing every click on the page.
+
+### Earlier version
+
+This replaced a cinematic build with a WebGL 3D project rail and a halftone
+light theme. It's preserved in git — `git show 368c2d2` to read it, or
+`git checkout 368c2d2 -- src index.html` to bring it back.

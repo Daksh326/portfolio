@@ -115,34 +115,27 @@ function revealStagger(el) {
 /** Hero intro — runs once, straight after the preloader hands over. */
 export function playIntro() {
   const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
+  const stack = [...document.querySelectorAll('.hero__stack span')];
 
   if (reducedMotion) {
-    gsap.set('.hero [data-reveal]', { opacity: 1, y: 0 });
+    gsap.set(['.hero__rule', '.hero__meta', '.hero__cue'], { opacity: 1, y: 0 });
+    gsap.set(stack, { opacity: 1, yPercent: 0 });
     return tl;
   }
 
-  const title = document.querySelector('.hero__title');
-  const chars = title ? splitChars(title) : [];
-  const lede = document.querySelector('.hero__lede');
-  const lines = lede ? splitLines(lede) : [];
+  const display = document.querySelector('.hero__display');
+  const chars = display ? splitChars(display) : [];
 
-  gsap.set(chars, { yPercent: 120, rotate: 6 });
-  gsap.set(lines, { yPercent: 110, opacity: 0 });
-  gsap.set(['.hero__kicker', '.hero__actions', '.hero__index', '.hero__scroll'], {
-    y: 30,
-    opacity: 0,
-  });
+  gsap.set(chars, { yPercent: 118 });
+  gsap.set(stack, { yPercent: 110, opacity: 0 });
+  gsap.set(['.hero__rule', '.hero__meta', '.hero__cue'], { y: 24, opacity: 0 });
 
-  tl.to('.hero__kicker', { y: 0, opacity: 1, duration: 1 }, 0.05)
-    .to(
-      chars,
-      { yPercent: 0, rotate: 0, duration: 1.5, stagger: { each: 0.032, from: 'start' } },
-      0.1
-    )
-    .to(lines, { yPercent: 0, opacity: 1, duration: 1.1, stagger: 0.08 }, 0.55)
-    .to('.hero__actions', { y: 0, opacity: 1, duration: 1.1 }, 0.72)
-    .to('.hero__index', { y: 0, opacity: 1, duration: 1.1 }, 0.8)
-    .to('.hero__scroll', { y: 0, opacity: 1, duration: 1.1 }, 0.9);
+  tl.to(chars, { yPercent: 0, duration: 1.5, stagger: { each: 0.03, from: 'start' } }, 0.05)
+    .to('.hero__rule', { y: 0, opacity: 1, duration: 1 }, 0.45)
+    .to('.hero__meta', { y: 0, opacity: 1, duration: 1 }, 0.55)
+    // The stacked assertions land one after another — the signature beat.
+    .to(stack, { yPercent: 0, opacity: 1, duration: 1, stagger: 0.075 }, 0.6)
+    .to('.hero__cue', { y: 0, opacity: 1, duration: 1 }, 0.95);
 
   return tl;
 }

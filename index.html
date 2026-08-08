@@ -1,93 +1,56 @@
 <!doctype html>
-<html lang="en" class="is-booting">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#070908" />
-    <title>Daksh Chaudhary — Computer Science / Engineer</title>
+    <meta name="theme-color" content="#0c0c0c" />
+    <title>Daksh Chaudhary — Computer Science</title>
     <meta
       name="description"
-      content="Portfolio of Daksh Chaudhary — computer science student building systems, networks and interfaces. Selected work, stack and contact."
+      content="Daksh Chaudhary — computer science student building systems, networks and interfaces. Selected work, experience and contact."
     />
-    <meta property="og:title" content="Daksh Chaudhary — Computer Science / Engineer" />
-    <meta
-      property="og:description"
-      content="Selected work in systems, networking and the web."
-    />
+    <meta property="og:title" content="Daksh Chaudhary — Computer Science" />
+    <meta property="og:description" content="Systems, networks and interfaces. Selected work." />
     <meta property="og:type" content="website" />
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23070908'/%3E%3Ctext x='16' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%23ff8a3d' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E" />
-
-    <script>
-      // Set the theme before first paint, or the page flashes dark on a
-      // light-theme reload. Deliberately inline and synchronous.
-      (function () {
-        var t = 'dark';
-        try { t = localStorage.getItem('dc-theme') || 'dark'; } catch (e) {}
-        document.documentElement.setAttribute('data-theme', t);
-        var m = document.querySelector('meta[name="theme-color"]');
-        if (m) m.setAttribute('content', t === 'light' ? '#f4f3f0' : '#070908');
-      })();
-    </script>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%230c0c0c'/%3E%3Ctext x='16' y='24' font-family='monospace' font-size='20' font-weight='700' fill='%23fa4e3e' text-anchor='middle'%3ED%3C/text%3E%3C/svg%3E"
+    />
   </head>
 
   <body>
-    <!-- ── WebGL stage: one canvas for the whole page ───────────────────── -->
-    <canvas id="gl" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
 
-    <!-- ── Film overlays ───────────────────────────────────────────────── -->
-    <div class="overlay overlay--grain" aria-hidden="true"></div>
-    <div class="overlay overlay--vignette" aria-hidden="true"></div>
-    <div class="overlay overlay--scan" aria-hidden="true"></div>
-
-    <!-- ── Cursor ──────────────────────────────────────────────────────── -->
     <div class="cursor" aria-hidden="true">
-      <div class="cursor__ring"><span class="cursor__label"></span></div>
+      <div class="cursor__ring"></div>
       <div class="cursor__dot"></div>
     </div>
 
     <!-- ── Preloader ───────────────────────────────────────────────────── -->
     <div class="loader" id="loader">
-      <div class="loader__inner">
-        <div class="loader__meta">
-          <span class="mono">INITIALISING</span>
-          <span class="mono loader__status">core / geometry / shaders</span>
-        </div>
-        <div class="loader__count">
-          <span class="loader__num" id="loaderNum">000</span>
-        </div>
-        <div class="loader__bar"><i id="loaderBar"></i></div>
+      <div class="loader__row">
+        <span class="mono" data-loader-name></span>
+        <span class="mono" id="loaderNum">000</span>
       </div>
+      <div class="loader__bar"><i id="loaderBar"></i></div>
     </div>
 
     <!-- ── Nav ─────────────────────────────────────────────────────────── -->
     <header class="nav" id="nav">
-      <a class="nav__logo" href="#hero" data-cursor="link" aria-label="Home">
-        <span>DC</span>
+      <a class="nav__mark" href="#top" data-cursor="link">
+        <span class="mono" data-nav-mark></span>
       </a>
 
-      <nav class="nav__links" aria-label="Primary">
+      <nav class="nav__mid" aria-label="Primary">
         <a href="#work" data-nav-link>Work</a>
-        <a href="#stack" data-nav-link>Stack</a>
-        <a href="#path" data-nav-link>Path</a>
+        <a href="#about" data-nav-link>About</a>
         <a href="#contact" data-nav-link>Contact</a>
       </nav>
 
-      <div class="nav__tools">
-        <button
-          class="chip chip--icon"
-          id="themeBtn"
-          aria-pressed="false"
-          aria-label="Switch to light theme"
-          data-cursor="link"
-        >
-          <svg viewBox="0 0 16 16" aria-hidden="true">
-            <circle cx="8" cy="8" r="6.1" />
-            <path d="M8 1.9a6.1 6.1 0 0 0 0 12.2z" />
-          </svg>
-        </button>
-        <a class="chip" href="#contact" data-cursor="link">CV</a>
-        <span class="chip chip--mute">2026</span>
-        <button class="chip chip--btn" id="menuBtn" aria-expanded="false" aria-controls="menu" aria-label="Open menu">
+      <div class="nav__end">
+        <span class="mono nav__clock" data-clock></span>
+        <button class="menuBtn" id="menuBtn" aria-expanded="false" aria-controls="menu">
+          <span class="mono">Menu</span>
           <i></i><i></i>
         </button>
       </div>
@@ -95,176 +58,62 @@
 
     <!-- ── Fullscreen menu ─────────────────────────────────────────────── -->
     <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Menu" hidden>
-      <div class="menu__grid" aria-hidden="true"></div>
-      <ul class="menu__list">
-        <li><a href="#hero" data-menu-link><em class="mono">01</em><span>Index</span></a></li>
-        <li><a href="#about" data-menu-link><em class="mono">02</em><span>About</span></a></li>
-        <li><a href="#work" data-menu-link><em class="mono">03</em><span>Work</span></a></li>
-        <li><a href="#stack" data-menu-link><em class="mono">04</em><span>Stack</span></a></li>
-        <li><a href="#path" data-menu-link><em class="mono">05</em><span>Path</span></a></li>
-        <li><a href="#contact" data-menu-link><em class="mono">06</em><span>Contact</span></a></li>
-      </ul>
-      <div class="menu__foot mono" data-menu-foot></div>
+      <ul class="menu__list" data-menu-list></ul>
+      <div class="menu__foot">
+        <ul class="menu__socials" data-menu-socials></ul>
+        <span class="mono" data-menu-mail></span>
+      </div>
     </div>
 
-    <!-- ── Section index rail (right edge) ─────────────────────────────── -->
-    <aside class="rail" id="sectionRail" aria-hidden="true">
-      <ol class="rail__list"></ol>
-      <div class="rail__line"><i></i></div>
-    </aside>
-
-    <main id="main">
+    <main id="top">
       <!-- ── HERO ──────────────────────────────────────────────────────── -->
-      <section class="hero" id="hero" data-section="Index">
-        <div class="hero__inner">
-          <p class="hero__kicker mono" data-reveal="fade">
-            <i></i> Portfolio — Vol. 01
-          </p>
+      <section class="hero">
+        <h1 class="hero__display display" data-hero-display></h1>
 
-          <h1 class="hero__title display" data-reveal="chars">
-            <span class="line">DAKSH</span>
-            <span class="line line--indent">CHAUDHARY</span>
-          </h1>
-
-          <p class="hero__lede" data-reveal="lines">
-            Computer science student building systems that hold up under load —
-            networks, backends, and interfaces with a pulse. Currently looking
-            for internships and collaborators.
-          </p>
-
-          <div class="hero__actions" data-reveal="fade">
-            <a class="btn btn--play" href="#work" data-cursor="play" data-magnetic>
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" /></svg>
-              <span>Selected work</span>
-            </a>
-            <a class="btn btn--ghost" href="#contact" data-cursor="link" data-magnetic>Get in touch</a>
-          </div>
+        <div class="hero__rule" aria-hidden="true">
+          <span class="mono">º</span><i></i><span class="mono">∞</span><i></i><span class="mono">º</span>
         </div>
 
-        <div class="hero__foot">
-          <div class="hero__index" data-reveal="fade">
-            <span class="display hero__indexNum">01</span>
-            <div class="hero__indexMeta">
-              <span class="mono" data-hero-role></span>
-              <span class="mono dim" data-hero-place></span>
-            </div>
-            <span class="hero__arrow" aria-hidden="true">→</span>
-          </div>
-
-          <a class="hero__scroll mono" href="#about" data-cursor="link">
-            <span>Scroll</span>
-            <i></i>
-          </a>
+        <div class="hero__meta">
+          <span class="mono" data-hero-location></span>
+          <span class="mono" data-hero-role></span>
         </div>
+
+        <div class="hero__stack" data-hero-stack></div>
+
+        <a class="hero__cue mono" href="#about" data-cursor="link">
+          <span>Scroll</span><i></i>
+        </a>
       </section>
 
-      <!-- ── ABOUT ─────────────────────────────────────────────────────── -->
-      <section class="about" id="about" data-section="About">
-        <div class="marquee" aria-hidden="true"><div class="marquee__track" data-marquee></div></div>
+      <!-- Full-bleed band, where the reference puts its hero photograph -->
+      <figure class="band" data-media="hero"></figure>
 
-        <div class="shell about__shell">
-          <header class="secHead">
-            <span class="secHead__num display" data-reveal="fade">02</span>
-            <h2 class="secHead__title display" data-reveal="chars">About</h2>
-            <span class="secHead__rule" data-reveal="rule"></span>
-          </header>
+      <!-- Sections are generated from content.js, in its order -->
+      <div id="sections"></div>
 
-          <div class="about__body">
-            <div class="about__col">
-              <p class="lead" data-reveal="lines" data-about-lead></p>
-              <p class="body" data-reveal="lines" data-about-body></p>
-            </div>
-            <ul class="stats" data-stats></ul>
-          </div>
-        </div>
+      <!-- ── CTA ───────────────────────────────────────────────────────── -->
+      <section class="cta" id="contact">
+        <figure class="cta__bg" data-media="cta" aria-hidden="true"></figure>
+        <p class="mono cta__eyebrow">Open to internships &amp; collaborators</p>
+        <h2 class="cta__title display">Let's build<br />something</h2>
+        <a class="btn" data-contact-mail href="#" data-cursor="link" data-magnetic>
+          <span>Get in touch</span>
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12L12 4M12 4H5.5M12 4v6.5" /></svg>
+        </a>
       </section>
 
-      <!-- ── WORK (pinned 3D rail) ─────────────────────────────────────── -->
-      <section class="work" id="work" data-section="Work">
-        <div class="work__pin" id="workPin">
-          <div class="work__scrim" aria-hidden="true"></div>
-
-          <header class="secHead secHead--float">
-            <span class="secHead__num display">03</span>
-            <h2 class="secHead__title display">Selected work</h2>
-          </header>
-
-          <!-- Overlay copy for the focused project -->
-          <div class="proj" id="proj">
-            <div class="proj__num display" data-proj-num>01</div>
-            <h3 class="proj__title display" data-proj-title></h3>
-            <p class="proj__blurb" data-proj-blurb></p>
-            <ul class="proj__tags" data-proj-tags></ul>
-            <div class="proj__meta mono">
-              <span data-proj-role></span>
-              <span class="dot" aria-hidden="true"></span>
-              <span data-proj-year></span>
-            </div>
-            <div class="proj__links" data-proj-links></div>
-          </div>
-
-          <!-- Episode-style thumbnail rail -->
-          <ol class="thumbs" id="thumbs" aria-label="Projects"></ol>
-
-          <!-- Controls -->
-          <div class="work__ctrl">
-            <button class="ctrl" data-rail-prev aria-label="Previous project" data-cursor="arrow">←</button>
-            <div class="work__progress"><i data-rail-progress></i></div>
-            <button class="ctrl" data-rail-next aria-label="Next project" data-cursor="arrow">→</button>
-            <span class="mono work__hint">drag / scroll</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- ── STACK ─────────────────────────────────────────────────────── -->
-      <section class="stack" id="stack" data-section="Stack">
-        <div class="shell">
-          <header class="secHead">
-            <span class="secHead__num display" data-reveal="fade">04</span>
-            <h2 class="secHead__title display" data-reveal="chars">Stack</h2>
-            <span class="secHead__rule" data-reveal="rule"></span>
-          </header>
-          <div class="stack__grid" data-stack></div>
-        </div>
-      </section>
-
-      <!-- ── PATH ──────────────────────────────────────────────────────── -->
-      <section class="path" id="path" data-section="Path">
-        <div class="shell">
-          <header class="secHead">
-            <span class="secHead__num display" data-reveal="fade">05</span>
-            <h2 class="secHead__title display" data-reveal="chars">Path</h2>
-            <span class="secHead__rule" data-reveal="rule"></span>
-          </header>
-          <ol class="tl" data-timeline></ol>
-        </div>
-      </section>
-
-      <!-- ── CONTACT ───────────────────────────────────────────────────── -->
-      <section class="contact" id="contact" data-section="Contact">
-        <div class="shell contact__shell">
-          <span class="secHead__num display" data-reveal="fade">06</span>
-          <h2 class="contact__title display" data-reveal="chars">
-            <span class="line">Let's build</span>
-            <span class="line line--indent">something</span>
-          </h2>
-
-          <a class="mailto display" data-contact-mail data-cursor="link" data-magnetic href="#"></a>
-
-          <ul class="contact__links" data-contact-links></ul>
-
-          <footer class="foot mono">
-            <span data-foot-left></span>
-            <span data-foot-right></span>
-          </footer>
-        </div>
-      </section>
+      <!-- ── Footer ────────────────────────────────────────────────────── -->
+      <footer class="foot">
+        <span class="mono" data-foot-left></span>
+        <ul class="foot__socials" data-foot-socials></ul>
+        <a class="mono foot__top" href="#top" data-cursor="link">Back to top ↑</a>
+      </footer>
     </main>
 
     <noscript>
       <div class="noscript">
-        This portfolio uses WebGL and JavaScript for its 3D scenes. Please enable
-        JavaScript, or reach me directly at
+        This site uses JavaScript for its layout and motion. Reach me directly at
         <a href="mailto:dakshjawla326@gmail.com">dakshjawla326@gmail.com</a>.
       </div>
     </noscript>
