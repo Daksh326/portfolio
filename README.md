@@ -1,4 +1,4 @@
-# Daksh Chaudhary — Portfolio
+# Daksh Jawla — Portfolio
 
 A dark, minimal, type-led single-page portfolio. Near-black base, vermilion
 accent, condensed display type, numbered sections.

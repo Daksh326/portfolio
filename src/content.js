@@ -10,10 +10,10 @@
  */
 
 export const profile = {
-  name: 'Daksh Chaudhary',
-  initials: 'DC',
+  name: 'Daksh Jawla',
+  initials: 'DJ',
   /** Giant display word(s) in the hero. Short reads best — it's set ~260px. */
-  display: 'Daksh Chaudhary',
+  display: 'Daksh Jawla',
   location: 'india',
   role: 'computer science',
   year: '2026',
