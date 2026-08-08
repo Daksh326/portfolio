@@ -36,7 +36,7 @@ export const profile = {
 
   socials: [
     { label: 'GitHub', href: 'https://github.com/Daksh326' },
-    { label: 'LinkedIn', href: '#' }, // PLACEHOLDER
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/daksh-jawla-b09725327/' },
     { label: 'Email', href: 'mailto:dakshjawla326@gmail.com' },
   ],
 };
